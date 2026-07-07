@@ -1,7 +1,3 @@
-/* =========================================
-   Twitch Prediction Overlay – JS v5
-   ========================================= */
-
 'use strict';
 
 let state = {
@@ -22,10 +18,7 @@ let cfg = {
   hideDelay: 8
 };
 
-/* ================================================================
-   STREAMELEMENTS EVENTS
-   ================================================================ */
-
+/* ── StreamElements events ── */
 window.addEventListener('onWidgetLoad', (obj) => {
   const f = obj.detail.fieldData;
   applyConfig(f);
@@ -41,10 +34,7 @@ window.addEventListener('onEventReceived', (obj) => {
   if (listener === 'prediction-end')      onEnd(data);
 });
 
-/* ================================================================
-   HANDLERS
-   ================================================================ */
-
+/* ── Handlers ── */
 function onBegin(d) {
   clearTimers();
   state = {
@@ -74,9 +64,8 @@ function onLock(d) {
   state.status = 'locked';
   if (d.outcomes) state.outcomes = mapOutcomes(d.outcomes);
   clearInterval(state.timerInterval);
-  // Timer affiche "--"
   const t = el('timer-display');
-  if (t) { t.textContent = '--'; t.classList.remove('urgent'); }
+  if (t) { t.textContent = 'Verrouillé'; t.classList.remove('urgent'); }
   setBadgeStatus();
   updateBars();
   updateStats();
@@ -93,20 +82,17 @@ function onEnd(d) {
     users: o.users || 0,
     isWinner: o.id === wid
   }));
+  // Cacher le timer et afficher "Terminé"
+  const t = el('timer-display');
+  if (t) { t.textContent = 'Terminé'; t.classList.remove('urgent'); }
   renderResult();
   setBadgeStatus();
-  updateBars();
+  updateBars(true);
   updateStats();
-  // Cacher le timer
-  const t = el('timer-display');
-  if (t) t.style.display = 'none';
   state.hideTimeout = setTimeout(hide, cfg.hideDelay * 1000);
 }
 
-/* ================================================================
-   RENDER
-   ================================================================ */
-
+/* ── Render ── */
 function render() {
   el('prediction-title').textContent = state.title;
   el('opt-1-name').textContent = state.outcomes[0]?.title || '';
@@ -117,7 +103,8 @@ function render() {
     b.className = 'opt-badge';
     b.textContent = '';
   });
-  // Reset timer
+  el('bar-left').classList.remove('winner-side');
+  el('bar-right').classList.remove('winner-side');
   const t = el('timer-display');
   if (t) { t.style.display = ''; t.classList.remove('urgent'); }
   setBadgeStatus();
@@ -135,9 +122,13 @@ function renderResult() {
     badge.className = `opt-badge ${o.isWinner ? 'win' : 'lose'}`;
     badge.textContent = o.isWinner ? '🏆 Gagnant' : 'Perdant';
   });
+  // Glow sur la barre du gagnant
+  const wIdx = state.outcomes.findIndex(o => o.isWinner);
+  if (wIdx === 0) el('bar-left').classList.add('winner-side');
+  if (wIdx === 1) el('bar-right').classList.add('winner-side');
 }
 
-function updateBars() {
+function updateBars(isEnd) {
   const total = state.outcomes.reduce((a, o) => a + (o.channel_points||0), 0);
   const pct1  = total > 0 ? Math.round((state.outcomes[0]?.channel_points||0) / total * 100) : 50;
   const pct2  = 100 - pct1;
@@ -160,9 +151,9 @@ function updateStats() {
 
 function setBadgeStatus() {
   const map = {
-    active: ['EN COURS',   's-active'],
-    locked: ['VERROUILLÉ', 's-locked'],
-    ended:  ['TERMINÉ',    's-ended']
+    active: ['EN COURS',    's-active'],
+    locked: ['VERROUILLÉ',  's-locked'],
+    ended:  ['TERMINÉ',     's-ended']
   };
   const [txt, cls] = map[state.status] || map.active;
   const b = el('status-badge');
@@ -170,10 +161,7 @@ function setBadgeStatus() {
   b.className = `status ${cls}`;
 }
 
-/* ================================================================
-   TIMER (dans la barre, centré)
-   ================================================================ */
-
+/* ── Timer ── */
 function startTimer() {
   const disp = el('timer-display');
   if (!disp) return;
@@ -188,10 +176,7 @@ function startTimer() {
   }, 1000);
 }
 
-/* ================================================================
-   SHOW / HIDE
-   ================================================================ */
-
+/* ── Show / Hide ── */
 function show() {
   const w = el('prediction-widget');
   w.classList.remove('hidden', 'out');
@@ -210,61 +195,65 @@ function hide() {
   }, 350);
 }
 
-/* ================================================================
-   PREVIEW AVEC ANIMATION
-   ================================================================ */
-
+/* ── Preview avec animation complète ── */
 function showPreview() {
   onBegin({
-    title: 'Ce run finit-il en moins de 30 min ?',
-    locks_at: new Date(Date.now() + 90000).toISOString(),
+    title: 'Ce run finit-il en moins de 30 min ?',
+    locks_at: new Date(Date.now() + 15000).toISOString(),
     outcomes: [
-      { id:'1', title:'✅ Oui, facile !' },
+      { id:'1', title:'✅ Oui, facile !' },
       { id:'2', title:'❌ Non, trop dur' }
     ]
   });
 
-  let step = 0;
   const steps = [
-    [800,   800,  10, 10],
-    [2400,  1200, 28, 15],
-    [4500,  2800, 52, 31],
-    [5800,  5200, 61, 58],
-    [7200,  8100, 73, 85],
-    [8900, 10500, 84, 99],
-    [9600, 12200, 90,110],
-    [11000,14800, 97,130],
-    [12450, 8200, 87, 53]
+    { delay:800,  pts:[800,800],     users:[10,10] },
+    { delay:1700, pts:[2400,1200],   users:[28,15] },
+    { delay:2600, pts:[4500,2800],   users:[52,31] },
+    { delay:3500, pts:[5800,5200],   users:[61,58] },
+    { delay:4400, pts:[7200,8100],   users:[73,85] },
+    { delay:5300, pts:[8900,10500],  users:[84,99] },
+    { delay:6200, pts:[9600,12200],  users:[90,110]},
+    // Verrouillage
+    { delay:7100, lock: true, pts:[10200,13800], users:[95,122] },
+    // Résultat – option 2 gagne
+    { delay:9200, end: true, winning_outcome_id:'2', pts:[10200,13800], users:[95,122] }
   ];
 
-  onProgress({
-    outcomes: [
-      { id:'1', title:'✅ Oui, facile !',  channel_points: steps[0][0], users: steps[0][2] },
-      { id:'2', title:'❌ Non, trop dur', channel_points: steps[0][1], users: steps[0][3] }
-    ]
+  steps.forEach(s => {
+    const tid = setTimeout(() => {
+      if (s.lock) {
+        onLock({ outcomes: [
+          { id:'1', title:'✅ Oui, facile !', channel_points:s.pts[0], users:s.users[0] },
+          { id:'2', title:'❌ Non, trop dur', channel_points:s.pts[1], users:s.users[1] }
+        ]});
+      } else if (s.end) {
+        onEnd({
+          winning_outcome_id: s.winning_outcome_id,
+          outcomes: [
+            { id:'1', title:'✅ Oui, facile !', channel_points:s.pts[0], users:s.users[0] },
+            { id:'2', title:'❌ Non, trop dur', channel_points:s.pts[1], users:s.users[1] }
+          ]
+        });
+      } else {
+        onProgress({ outcomes: [
+          { id:'1', title:'✅ Oui, facile !', channel_points:s.pts[0], users:s.users[0] },
+          { id:'2', title:'❌ Non, trop dur', channel_points:s.pts[1], users:s.users[1] }
+        ]});
+      }
+    }, s.delay);
+    // Stocker les timeouts pour pouvoir les annuler si besoin
+    if (!state._previewTids) state._previewTids = [];
+    state._previewTids.push(tid);
   });
-
-  state.previewInterval = setInterval(() => {
-    step++;
-    if (step >= steps.length) { clearInterval(state.previewInterval); return; }
-    const [p1, p2, pu1, pu2] = steps[step];
-    onProgress({
-      outcomes: [
-        { id:'1', title:'✅ Oui, facile !',  channel_points: p1, users: pu1 },
-        { id:'2', title:'❌ Non, trop dur', channel_points: p2, users: pu2 }
-      ]
-    });
-  }, 900);
 }
 
 function stopPreviewAnimation() {
   if (state.previewInterval) { clearInterval(state.previewInterval); state.previewInterval = null; }
+  if (state._previewTids) { state._previewTids.forEach(clearTimeout); state._previewTids = []; }
 }
 
-/* ================================================================
-   CONFIG
-   ================================================================ */
-
+/* ── Config ── */
 function applyConfig(f) {
   if (f.color1) cfg.color1 = f.color1;
   if (f.color2) cfg.color2 = f.color2;
@@ -279,10 +268,7 @@ function applyConfig(f) {
   }
 }
 
-/* ================================================================
-   UTILS
-   ================================================================ */
-
+/* ── Utils ── */
 const el          = (id) => document.getElementById(id);
 const setText     = (id, v) => { const e = el(id); if (e) e.textContent = v; };
 const fmt         = (n) => n >= 1e6 ? (n/1e6).toFixed(1)+'M' : n >= 1e3 ? (n/1e3).toFixed(1)+'k' : String(n);

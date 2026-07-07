@@ -1,6 +1,6 @@
 /* =========================================
-   Twitch Prediction Overlay – CSS v5
-   Barre large, % dedans, timer centre
+   Twitch Prediction Overlay – CSS v6
+   Timer au-dessus de la barre, centré
    ========================================= */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -89,13 +89,14 @@ body {
   padding: 8px 12px 0;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 0;
 }
 
 /* ---- Noms côte à côte ---- */
 .options-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  margin-bottom: 5px;
 }
 
 .option { display:flex; flex-direction:column; }
@@ -138,6 +139,24 @@ body {
 .opt-badge.win  { display:inline; color:#ffd700; }
 .opt-badge.lose { display:inline; color:var(--muted); }
 
+/* ---- Timer AU-DESSUS de la barre, centré ---- */
+.bar-timer-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.bar-timer {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255,255,255,.75);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .5px;
+  line-height: 1;
+}
+.bar-timer.urgent { color: #ff5252; animation: blink 1s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.35} }
+
 /* ---- Barre large ---- */
 .split-bar-wrap {
   position: relative;
@@ -161,14 +180,12 @@ body {
   overflow: hidden;
   min-width: 36px;
 }
-/* Reflet interne */
 .bar-left::after {
   content: '';
   position: absolute; inset: 0;
   background: linear-gradient(180deg, rgba(255,255,255,.18) 0%, transparent 55%);
   pointer-events: none;
 }
-/* Curseur blanc au centre */
 .bar-left::before {
   content: '';
   position: absolute;
@@ -198,7 +215,6 @@ body {
   pointer-events: none;
 }
 
-/* Pourcentages à l'intérieur de la barre */
 .bar-pct {
   font-size: 13px;
   font-weight: 700;
@@ -210,35 +226,12 @@ body {
   text-shadow: 0 1px 3px rgba(0,0,0,.3);
 }
 
-/* Timer centré en absolu sur la barre */
-.bar-timer {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 3;
-  font-size: 12px;
-  font-weight: 700;
-  color: #ffffff;
-  font-variant-numeric: tabular-nums;
-  background: rgba(0,0,0,.35);
-  padding: 2px 8px;
-  border-radius: 20px;
-  border: 1px solid rgba(255,255,255,.15);
-  backdrop-filter: blur(4px);
-  line-height: 1.4;
-  white-space: nowrap;
-  pointer-events: none;
-}
-.bar-timer.urgent { color: #ff5252; animation: blink 1s ease-in-out infinite; }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.35} }
-
 /* ---- Stats sous la barre ---- */
 .stats-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 1px;
+  margin-top: 4px;
 }
 
 .stats-left,
@@ -263,6 +256,14 @@ body {
 /* ---- États résultat ---- */
 .option.winner .opt-name { color: #ffd700; }
 .option.loser  { opacity: .4; }
+
+/* Glow gagnant sur la barre côté winner */
+@keyframes winGlowBar {
+  0%,100% { box-shadow: none; }
+  50%     { box-shadow: inset 0 0 12px rgba(255,215,0,.18); }
+}
+.bar-left.winner-side  { animation: winGlowBar 2.5s ease-in-out infinite; }
+.bar-right.winner-side { animation: winGlowBar 2.5s ease-in-out infinite; }
 
 /* ---- Footer ---- */
 .widget-footer {
