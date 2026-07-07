@@ -12,62 +12,61 @@
 
 <div id="prediction-widget" class="widget hidden">
 
-  <!-- Titre + timer -->
-  <div class="widget-top">
-    <span class="widget-label">PRÉDICTION</span>
-    <span class="widget-title" id="prediction-title">Qui va gagner ?</span>
-    <div class="widget-right">
+  <!-- Header : label + titre + statut + timer -->
+  <div class="widget-header">
+    <div class="header-left">
+      <span class="lbl-prediction">PRÉDICTION</span>
+      <span class="prediction-title" id="prediction-title">Qui va gagner ?</span>
+    </div>
+    <div class="header-right">
       <span class="timer" id="timer-display">60s</span>
       <span class="status" id="status-badge">EN COURS</span>
     </div>
   </div>
 
-  <!-- Corps : deux options côte à côte -->
-  <div class="widget-body">
-
-    <!-- Option 1 -->
-    <div class="option" id="option-1">
-      <div class="opt-header">
-        <span class="opt-color c1"></span>
-        <span class="opt-name" id="opt-1-name">Option A</span>
-        <span class="opt-pct" id="opt-1-pct">50%</span>
-      </div>
-      <div class="opt-bar-track">
-        <div class="opt-bar b1" id="opt-1-bar" style="width:50%"></div>
-      </div>
-      <div class="opt-stats">
-        <span class="opt-pts" id="opt-1-pts">0 pts</span>
-        <span class="opt-users" id="opt-1-users">0 <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2.5"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2.5"/></svg></span>
-      </div>
-      <span class="opt-badge" id="opt-1-badge"></span>
-    </div>
-
-    <!-- Séparateur VS -->
-    <div class="vs">VS</div>
-
-    <!-- Option 2 -->
-    <div class="option" id="option-2">
-      <div class="opt-header">
-        <span class="opt-color c2"></span>
-        <span class="opt-name" id="opt-2-name">Option B</span>
-        <span class="opt-pct" id="opt-2-pct">50%</span>
-      </div>
-      <div class="opt-bar-track">
-        <div class="opt-bar b2" id="opt-2-bar" style="width:50%"></div>
-      </div>
-      <div class="opt-stats">
-        <span class="opt-pts" id="opt-2-pts">0 pts</span>
-        <span class="opt-users" id="opt-2-users">0 <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2.5"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2.5"/></svg></span>
-      </div>
-      <span class="opt-badge" id="opt-2-badge"></span>
-    </div>
-
+  <!-- Barre de progression unifiée (split bleu|violet) -->
+  <div class="split-bar-wrap">
+    <div class="split-bar-left"  id="split-left"  style="width:50%"></div>
+    <div class="split-bar-right" id="split-right" style="width:50%"></div>
   </div>
 
-  <!-- Pied : total -->
-  <div class="widget-foot">
-    <span id="total-pts">0</span> pts au total
-    &nbsp;·&nbsp;
+  <!-- Option 1 -->
+  <div class="option" id="option-1">
+    <div class="opt-row">
+      <span class="dot c1"></span>
+      <span class="opt-name" id="opt-1-name">Option A</span>
+      <span class="opt-pct"  id="opt-1-pct">50%</span>
+    </div>
+    <div class="opt-meta">
+      <span class="opt-pts"  id="opt-1-pts">0 pts</span>
+      <span class="opt-sep">·</span>
+      <span class="opt-users" id="opt-1-users">0 votants</span>
+      <span class="opt-badge" id="opt-1-badge"></span>
+    </div>
+  </div>
+
+  <!-- Diviseur interne -->
+  <div class="inner-sep"></div>
+
+  <!-- Option 2 -->
+  <div class="option" id="option-2">
+    <div class="opt-row">
+      <span class="dot c2"></span>
+      <span class="opt-name" id="opt-2-name">Option B</span>
+      <span class="opt-pct"  id="opt-2-pct">50%</span>
+    </div>
+    <div class="opt-meta">
+      <span class="opt-pts"  id="opt-2-pts">0 pts</span>
+      <span class="opt-sep">·</span>
+      <span class="opt-users" id="opt-2-users">0 votants</span>
+      <span class="opt-badge" id="opt-2-badge"></span>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="widget-footer">
+    <span id="total-pts">0</span> pts
+    <span class="foot-sep">·</span>
     <span id="total-users">0</span> participants
   </div>
 
