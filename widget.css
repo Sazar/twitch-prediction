@@ -1,6 +1,6 @@
 /* =========================================
-   Twitch Prediction Overlay – CSS v4
-   Stats sous la barre
+   Twitch Prediction Overlay – CSS v5
+   Barre large, % dedans, timer centre
    ========================================= */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -14,6 +14,7 @@
   --muted:  rgba(255,255,255,0.42);
   --radius: 10px;
   --tr:     0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  --bar-h:  36px;
 }
 
 body {
@@ -69,22 +70,6 @@ body {
   min-width: 0;
 }
 
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-}
-
-.timer {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--muted);
-  font-variant-numeric: tabular-nums;
-}
-.timer.urgent { color: #ff5252; animation: blink 1s ease-in-out infinite; }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.35} }
-
 .status {
   font-size: 8.5px;
   font-weight: 700;
@@ -93,6 +78,7 @@ body {
   padding: 2px 7px;
   border-radius: 20px;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 .status.s-active { background:rgba(0,200,100,.12);   color:#00c864; border:1px solid rgba(0,200,100,.25); }
 .status.s-locked { background:rgba(255,180,0,.12);   color:#ffb400; border:1px solid rgba(255,180,0,.25); }
@@ -112,11 +98,8 @@ body {
   grid-template-columns: 1fr 1fr;
 }
 
-.option {
-  display: flex;
-  flex-direction: column;
-}
-.option.right { align-items: flex-end; }
+.option { display:flex; flex-direction:column; }
+.option.right { align-items:flex-end; }
 
 .opt-top {
   display: flex;
@@ -127,8 +110,7 @@ body {
 .opt-top.right { flex-direction: row-reverse; }
 
 .dot {
-  width: 8px;
-  height: 8px;
+  width: 8px; height: 8px;
   border-radius: 50%;
   flex-shrink: 0;
 }
@@ -156,56 +138,106 @@ body {
 .opt-badge.win  { display:inline; color:#ffd700; }
 .opt-badge.lose { display:inline; color:var(--muted); }
 
-/* ---- Barre split ---- */
-.split-bar {
+/* ---- Barre large ---- */
+.split-bar-wrap {
+  position: relative;
   display: flex;
-  height: 6px;
-  border-radius: 3px;
+  height: var(--bar-h);
+  border-radius: 6px;
   overflow: hidden;
-  background: rgba(255,255,255,.07);
+  background: rgba(255,255,255,.06);
 }
 
 .bar-left {
   height: 100%;
   background: var(--c1);
-  border-radius: 3px 0 0 3px;
+  border-radius: 6px 0 0 6px;
   transition: width var(--tr);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 10px;
   position: relative;
+  overflow: hidden;
+  min-width: 36px;
 }
+/* Reflet interne */
 .bar-left::after {
-  content:'';
-  position:absolute; inset:0;
-  background: linear-gradient(180deg, rgba(255,255,255,.2) 0%, transparent 60%);
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,.18) 0%, transparent 55%);
+  pointer-events: none;
 }
-/* Curseur central */
+/* Curseur blanc au centre */
 .bar-left::before {
-  content:'';
-  position:absolute;
-  right:-1px; top:0; bottom:0;
-  width:2px;
-  background:rgba(255,255,255,.6);
-  border-radius:1px;
-  z-index:1;
+  content: '';
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 2px;
+  background: rgba(255,255,255,.55);
+  z-index: 2;
 }
 
 .bar-right {
   height: 100%;
   background: var(--c2);
-  border-radius: 0 3px 3px 0;
+  border-radius: 0 6px 6px 0;
   flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 10px;
   position: relative;
+  overflow: hidden;
+  min-width: 36px;
 }
 .bar-right::after {
-  content:'';
-  position:absolute; inset:0;
-  background: linear-gradient(180deg, rgba(255,255,255,.2) 0%, transparent 60%);
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,.18) 0%, transparent 55%);
+  pointer-events: none;
 }
+
+/* Pourcentages à l'intérieur de la barre */
+.bar-pct {
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255,255,255,.9);
+  font-variant-numeric: tabular-nums;
+  position: relative;
+  z-index: 1;
+  line-height: 1;
+  text-shadow: 0 1px 3px rgba(0,0,0,.3);
+}
+
+/* Timer centré en absolu sur la barre */
+.bar-timer {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+  background: rgba(0,0,0,.35);
+  padding: 2px 8px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,.15);
+  backdrop-filter: blur(4px);
+  line-height: 1.4;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.bar-timer.urgent { color: #ff5252; animation: blink 1s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.35} }
 
 /* ---- Stats sous la barre ---- */
 .stats-row {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   margin-top: 1px;
 }
 
@@ -213,38 +245,19 @@ body {
 .stats-right {
   display: flex;
   align-items: center;
-  gap: 5px;
-}
-
-.stats-right {
-  flex-direction: row-reverse;
-  /* miroir : pct à droite, users à gauche */
-  flex-direction: row;
-  justify-content: flex-end;
-}
-
-.stat-pct {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text);
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-}
-
-.stat-pts {
-  font-size: 10px;
-  font-weight: 600;
-  color: rgba(255,255,255,.55);
-  font-variant-numeric: tabular-nums;
-}
-
-.stat-users {
+  gap: 4px;
   font-size: 10px;
   color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-pts   { color: rgba(255,255,255,.6); font-weight: 600; }
+.stat-sep   { color: var(--muted); }
+.stat-users {
   display: flex;
   align-items: center;
   gap: 2px;
-  font-variant-numeric: tabular-nums;
+  color: var(--muted);
 }
 
 /* ---- États résultat ---- */
@@ -265,10 +278,3 @@ body {
 }
 .widget-footer span { color:rgba(255,255,255,.65); font-weight:600; }
 .sep { color:var(--muted); }
-
-/* ---- Glow gagnant ---- */
-@keyframes winGlow {
-  0%,100% { background: rgba(255,215,0,.04); }
-  50%     { background: rgba(255,215,0,.09); }
-}
-.option.winner { animation: winGlow 2.5s ease-in-out infinite; }
