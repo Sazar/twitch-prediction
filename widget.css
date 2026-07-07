@@ -1,0 +1,395 @@
+/* ==========================================
+   Twitch Prediction Overlay – widget.css
+   ========================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', 'Roobert', sans-serif;
+  background: transparent;
+  overflow: hidden;
+  width: 420px;
+}
+
+/* ---- Variables ---- */
+:root {
+  --color-bg: rgba(14, 14, 18, 0.92);
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-option1: #5b8af5;
+  --color-option2: #e879f9;
+  --color-option1-glow: rgba(91, 138, 245, 0.3);
+  --color-option2-glow: rgba(232, 121, 249, 0.3);
+  --color-text-primary: #ffffff;
+  --color-text-secondary: rgba(255,255,255,0.6);
+  --color-text-muted: rgba(255,255,255,0.35);
+  --color-winner-bg: rgba(255, 215, 0, 0.12);
+  --color-winner-border: rgba(255, 215, 0, 0.5);
+  --radius: 16px;
+  --radius-sm: 8px;
+  --transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ---- Widget Container ---- */
+.prediction-widget {
+  width: 420px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 16px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 1px 0 rgba(255,255,255,0.05) inset;
+  transform-origin: top center;
+}
+
+/* ---- Animation states ---- */
+.prediction-widget.hidden {
+  display: none;
+}
+
+.prediction-widget.entering {
+  animation: slideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.prediction-widget.leaving {
+  animation: slideOut 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+}
+
+/* ---- Header ---- */
+.widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+  gap: 8px;
+}
+
+.header-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.prediction-icon {
+  width: 30px;
+  height: 30px;
+  background: linear-gradient(135deg, #9146ff, #bf94ff);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.prediction-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #9146ff;
+  text-transform: uppercase;
+}
+
+.prediction-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 230px;
+  line-height: 1.2;
+}
+
+.header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* ---- Timer ---- */
+.timer-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.timer-container.urgent {
+  color: #ff6b6b;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ---- Status Badge ---- */
+.status-badge {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 3px 8px;
+  border-radius: 20px;
+  text-transform: uppercase;
+}
+
+.status-badge.active {
+  background: rgba(0, 200, 100, 0.15);
+  color: #00c864;
+  border: 1px solid rgba(0, 200, 100, 0.3);
+}
+
+.status-badge.locked {
+  background: rgba(255, 180, 0, 0.15);
+  color: #ffb400;
+  border: 1px solid rgba(255, 180, 0, 0.3);
+}
+
+.status-badge.ended {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+}
+
+/* ---- Options container ---- */
+.options-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ---- Option card ---- */
+.option {
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--color-border);
+  transition: all var(--transition);
+}
+
+.option.winner {
+  background: var(--color-winner-bg);
+  border-color: var(--color-winner-border);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
+}
+
+.option.loser {
+  opacity: 0.45;
+  filter: grayscale(0.3);
+}
+
+.option-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.option-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dot-1 { background: var(--color-option1); box-shadow: 0 0 6px var(--color-option1-glow); }
+.dot-2 { background: var(--color-option2); box-shadow: 0 0 6px var(--color-option2-glow); }
+
+.option-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.option-badge {
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 12px;
+  font-weight: 700;
+  display: none;
+}
+
+.option-badge.winner-badge {
+  display: inline-block;
+  background: rgba(255, 215, 0, 0.2);
+  color: #ffd700;
+  border: 1px solid rgba(255, 215, 0, 0.4);
+}
+
+.option-badge.loser-badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.05);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+}
+
+/* ---- Progress bar ---- */
+.option-bar-container {
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.option-bar {
+  height: 100%;
+  border-radius: 3px;
+  transition: width var(--transition);
+}
+
+.bar-1 {
+  background: linear-gradient(90deg, var(--color-option1), rgba(91,138,245,0.7));
+  box-shadow: 0 0 8px var(--color-option1-glow);
+}
+
+.bar-2 {
+  background: linear-gradient(90deg, var(--color-option2), rgba(232,121,249,0.7));
+  box-shadow: 0 0 8px var(--color-option2-glow);
+}
+
+/* ---- Stats ---- */
+.option-stats {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.stat-points {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.stat-label {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.stat-separator {
+  color: var(--color-text-muted);
+  font-size: 11px;
+}
+
+.stat-users {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.stat-percent {
+  font-size: 13px;
+  font-weight: 700;
+  margin-left: auto;
+  color: var(--color-text-secondary);
+}
+
+/* ---- VS Divider ---- */
+.vs-divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+}
+
+.vs-line {
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.vs-text {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+}
+
+/* ---- Footer ---- */
+.widget-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.total-points,
+.total-users {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.total-points svg,
+.total-users svg { opacity: 0.5; }
+
+.total-points span,
+.total-users span {
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+
+/* ---- Résultat winner glow ---- */
+@keyframes winnerGlow {
+  0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.1); }
+  50% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.25); }
+}
+
+.option.winner {
+  animation: winnerGlow 2s ease-in-out infinite;
+}

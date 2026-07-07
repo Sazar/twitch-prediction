@@ -1,0 +1,30 @@
+{
+  "color1": {
+    "type": "colorpicker",
+    "label": "Couleur Option 1",
+    "value": "#5b8af5"
+  },
+  "color2": {
+    "type": "colorpicker",
+    "label": "Couleur Option 2",
+    "value": "#e879f9"
+  },
+  "showTimer": {
+    "type": "checkbox",
+    "label": "Afficher le timer",
+    "value": true
+  },
+  "hideDelay": {
+    "type": "slider",
+    "label": "Délai de disparition après résolution (secondes)",
+    "value": 8,
+    "min": 3,
+    "max": 30,
+    "steps": 1
+  },
+  "previewMode": {
+    "type": "checkbox",
+    "label": "Mode aperçu (affiche une prédiction de démonstration)",
+    "value": false
+  }
+}
