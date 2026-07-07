@@ -1,6 +1,6 @@
 /* =========================================
-   Twitch Prediction Overlay – CSS v3
-   Options cote-a-cote, barre unifiee
+   Twitch Prediction Overlay – CSS v4
+   Stats sous la barre
    ========================================= */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -94,48 +94,37 @@ body {
   border-radius: 20px;
   white-space: nowrap;
 }
-.status.s-active { background: rgba(0,200,100,.12);   color:#00c864; border:1px solid rgba(0,200,100,.25); }
-.status.s-locked { background: rgba(255,180,0,.12);   color:#ffb400; border:1px solid rgba(255,180,0,.25); }
-.status.s-ended  { background: rgba(255,255,255,.06); color:var(--muted); border:1px solid var(--border); }
+.status.s-active { background:rgba(0,200,100,.12);   color:#00c864; border:1px solid rgba(0,200,100,.25); }
+.status.s-locked { background:rgba(255,180,0,.12);   color:#ffb400; border:1px solid rgba(255,180,0,.25); }
+.status.s-ended  { background:rgba(255,255,255,.06); color:var(--muted); border:1px solid var(--border); }
 
 /* ---- Body ---- */
 .widget-body {
   padding: 8px 12px 0;
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 5px;
 }
 
-/* ---- Options row : cote-a-cote, pas de gap, bord commun ---- */
+/* ---- Noms côte à côte ---- */
 .options-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  /* pas de gap – les deux options se touchent */
 }
 
 .option {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  /* Option gauche */
-  align-items: flex-start;
 }
+.option.right { align-items: flex-end; }
 
-.option.right {
-  align-items: flex-end;
-  text-align: right;
-}
-
-/* Ligne supérieure : dot + nom + badge */
 .opt-top {
   display: flex;
   align-items: center;
   gap: 5px;
   max-width: 100%;
 }
-.opt-top.right {
-  flex-direction: row-reverse;
-}
+.opt-top.right { flex-direction: row-reverse; }
 
 .dot {
   width: 8px;
@@ -154,7 +143,7 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
-  max-width: 140px;
+  max-width: 160px;
 }
 
 .opt-badge {
@@ -162,45 +151,12 @@ body {
   font-weight: 700;
   display: none;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 .opt-badge.win  { display:inline; color:#ffd700; }
 .opt-badge.lose { display:inline; color:var(--muted); }
 
-/* Ligne inférieure : pct + pts + users */
-.opt-bottom {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-.opt-bottom.right {
-  flex-direction: row-reverse;
-}
-
-.opt-pct {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text);
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-}
-
-.opt-pts {
-  font-size: 10px;
-  font-weight: 600;
-  color: rgba(255,255,255,.6);
-  font-variant-numeric: tabular-nums;
-}
-
-.opt-users {
-  font-size: 10px;
-  color: var(--muted);
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  font-variant-numeric: tabular-nums;
-}
-
-/* ---- Barre split unifiée ---- */
+/* ---- Barre split ---- */
 .split-bar {
   display: flex;
   height: 6px;
@@ -216,13 +172,20 @@ body {
   transition: width var(--tr);
   position: relative;
 }
-/* reflet lumineux sur la barre */
-.bar-left::after, .bar-right::after {
+.bar-left::after {
+  content:'';
+  position:absolute; inset:0;
+  background: linear-gradient(180deg, rgba(255,255,255,.2) 0%, transparent 60%);
+}
+/* Curseur central */
+.bar-left::before {
   content:'';
   position:absolute;
-  inset:0;
-  background: linear-gradient(180deg, rgba(255,255,255,.18) 0%, transparent 60%);
-  pointer-events:none;
+  right:-1px; top:0; bottom:0;
+  width:2px;
+  background:rgba(255,255,255,.6);
+  border-radius:1px;
+  z-index:1;
 }
 
 .bar-right {
@@ -232,17 +195,61 @@ body {
   flex: 1;
   position: relative;
 }
-
-/* Curseur central (trait blanc) entre les deux côtés */
-.bar-left::before {
+.bar-right::after {
   content:'';
-  position:absolute;
-  right:-1px; top:0; bottom:0;
-  width:2px;
-  background:rgba(255,255,255,.55);
-  border-radius:1px;
-  z-index:1;
+  position:absolute; inset:0;
+  background: linear-gradient(180deg, rgba(255,255,255,.2) 0%, transparent 60%);
 }
+
+/* ---- Stats sous la barre ---- */
+.stats-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 1px;
+}
+
+.stats-left,
+.stats-right {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.stats-right {
+  flex-direction: row-reverse;
+  /* miroir : pct à droite, users à gauche */
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.stat-pct {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.stat-pts {
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255,255,255,.55);
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-users {
+  font-size: 10px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- États résultat ---- */
+.option.winner .opt-name { color: #ffd700; }
+.option.loser  { opacity: .4; }
 
 /* ---- Footer ---- */
 .widget-footer {
@@ -259,6 +266,9 @@ body {
 .widget-footer span { color:rgba(255,255,255,.65); font-weight:600; }
 .sep { color:var(--muted); }
 
-/* ---- États gagnant/perdant ---- */
-.option.winner .opt-pct { color: #ffd700; }
-.option.loser  { opacity: .4; }
+/* ---- Glow gagnant ---- */
+@keyframes winGlow {
+  0%,100% { background: rgba(255,215,0,.04); }
+  50%     { background: rgba(255,215,0,.09); }
+}
+.option.winner { animation: winGlow 2.5s ease-in-out infinite; }
