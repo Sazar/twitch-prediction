@@ -1,84 +1,68 @@
 /* =========================================
-   Twitch Prediction Overlay – CSS
-   Style : compact, colles, inspiré boingy
+   Twitch Prediction Overlay – CSS v3
+   Options cote-a-cote, barre unifiee
    ========================================= */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --c1:      #5b9cf6;
-  --c2:      #d672f5;
-  --bg:      rgba(10, 10, 14, 0.88);
-  --surface: rgba(255,255,255,0.04);
-  --border:  rgba(255,255,255,0.08);
-  --text:    #ffffff;
-  --muted:   rgba(255,255,255,0.42);
-  --radius:  10px;
-  --tr:      0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  --c1:     #5b9cf6;
+  --c2:     #d672f5;
+  --bg:     rgba(10, 10, 14, 0.88);
+  --border: rgba(255,255,255,0.08);
+  --text:   #ffffff;
+  --muted:  rgba(255,255,255,0.42);
+  --radius: 10px;
+  --tr:     0.55s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body {
   font-family: 'Inter', sans-serif;
   background: transparent;
   overflow: hidden;
-  width: 400px;
+  width: 420px;
 }
 
-/* -------- WIDGET -------- */
+/* ---- Widget ---- */
 .widget {
-  width: 400px;
+  width: 420px;
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  overflow: hidden;          /* clip la split-bar aux coins arrondis */
+  overflow: hidden;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
 }
 
 .widget.hidden { display: none; }
-.widget.in     { animation: slideIn .42s cubic-bezier(.34,1.56,.64,1) forwards; }
-.widget.out    { animation: slideOut .3s ease-in forwards; }
+.widget.in  { animation: wIn  .45s cubic-bezier(.34,1.56,.64,1) forwards; }
+.widget.out { animation: wOut .3s  ease-in forwards; }
 
-@keyframes slideIn {
-  from { opacity:0; transform:translateY(-12px) scale(.96); }
-  to   { opacity:1; transform:translateY(0)      scale(1);  }
-}
-@keyframes slideOut {
-  from { opacity:1; transform:translateY(0); }
-  to   { opacity:0; transform:translateY(-8px); }
-}
+@keyframes wIn  { from { opacity:0; transform:translateY(-10px) scale(.96); } to { opacity:1; transform:none; } }
+@keyframes wOut { from { opacity:1; transform:none; } to { opacity:0; transform:translateY(-8px); } }
 
-/* -------- HEADER -------- */
+/* ---- Header ---- */
 .widget-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 9px 12px 0;
-  gap: 8px;
-}
-
-.header-left {
-  display: flex;
-  align-items: baseline;
   gap: 7px;
-  min-width: 0;
-  flex: 1;
+  padding: 9px 12px 0;
 }
 
-.lbl-prediction {
+.lbl {
   font-size: 8.5px;
   font-weight: 700;
   letter-spacing: 1.5px;
   color: #9146ff;
   text-transform: uppercase;
-  white-space: nowrap;
   flex-shrink: 0;
 }
 
-.prediction-title {
+.title {
   font-size: 11.5px;
   font-weight: 600;
   color: var(--text);
+  flex: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -98,13 +82,8 @@ body {
   color: var(--muted);
   font-variant-numeric: tabular-nums;
 }
-.timer.urgent {
-  color: #ff5252;
-  animation: blink 1s ease-in-out infinite;
-}
-@keyframes blink {
-  0%,100% { opacity:1; } 50% { opacity:.35; }
-}
+.timer.urgent { color: #ff5252; animation: blink 1s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.35} }
 
 .status {
   font-size: 8.5px;
@@ -115,51 +94,47 @@ body {
   border-radius: 20px;
   white-space: nowrap;
 }
-.status.s-active { background: rgba(0,200,100,.12);  color: #00c864; border: 1px solid rgba(0,200,100,.25); }
-.status.s-locked { background: rgba(255,180,0,.12);  color: #ffb400; border: 1px solid rgba(255,180,0,.25); }
-.status.s-ended  { background: rgba(255,255,255,.06); color: var(--muted); border: 1px solid var(--border); }
+.status.s-active { background: rgba(0,200,100,.12);   color:#00c864; border:1px solid rgba(0,200,100,.25); }
+.status.s-locked { background: rgba(255,180,0,.12);   color:#ffb400; border:1px solid rgba(255,180,0,.25); }
+.status.s-ended  { background: rgba(255,255,255,.06); color:var(--muted); border:1px solid var(--border); }
 
-/* -------- SPLIT BAR -------- */
-.split-bar-wrap {
+/* ---- Body ---- */
+.widget-body {
+  padding: 8px 12px 0;
   display: flex;
-  height: 5px;
-  margin: 8px 12px 0;
-  border-radius: 3px;
-  overflow: hidden;
-  background: rgba(255,255,255,.06);
+  flex-direction: column;
+  gap: 7px;
 }
 
-.split-bar-left {
-  height: 100%;
-  background: var(--c1);
-  transition: width var(--tr);
-  border-radius: 3px 0 0 3px;
-}
-.split-bar-right {
-  height: 100%;
-  background: var(--c2);
-  transition: width var(--tr);
-  border-radius: 0 3px 3px 0;
-  flex: 1;  /* prend le reste */
+/* ---- Options row : cote-a-cote, pas de gap, bord commun ---- */
+.options-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  /* pas de gap – les deux options se touchent */
 }
 
-/* -------- OPTIONS (colles, pas de gap) -------- */
 .option {
-  padding: 8px 12px 7px;
   display: flex;
   flex-direction: column;
   gap: 3px;
-  transition: background var(--tr);
+  /* Option gauche */
+  align-items: flex-start;
 }
 
-/* Pas de border/radius individuel – on laisse le widget englober */
-.option.winner { background: rgba(255,215,0,.06); }
-.option.loser  { opacity: .42; }
+.option.right {
+  align-items: flex-end;
+  text-align: right;
+}
 
-.opt-row {
+/* Ligne supérieure : dot + nom + badge */
+.opt-top {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 5px;
+  max-width: 100%;
+}
+.opt-top.right {
+  flex-direction: row-reverse;
 }
 
 .dot {
@@ -175,71 +150,115 @@ body {
   font-size: 12px;
   font-weight: 600;
   color: var(--text);
-  flex: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
+  max-width: 140px;
 }
-
-.opt-pct {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text);
-  font-variant-numeric: tabular-nums;
-  flex-shrink: 0;
-}
-
-.opt-meta {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding-left: 15px; /* aligne sous le nom, après le dot */
-}
-
-.opt-pts {
-  font-size: 10.5px;
-  font-weight: 600;
-  color: rgba(255,255,255,.7);
-  font-variant-numeric: tabular-nums;
-}
-.opt-sep   { font-size: 10px; color: var(--muted); }
-.opt-users { font-size: 10px; color: var(--muted); font-variant-numeric: tabular-nums; }
 
 .opt-badge {
   font-size: 10px;
   font-weight: 700;
-  margin-left: auto;
   display: none;
+  white-space: nowrap;
 }
-.opt-badge.win  { display:block; color: #ffd700; }
-.opt-badge.lose { display:block; color: var(--muted); }
+.opt-badge.win  { display:inline; color:#ffd700; }
+.opt-badge.lose { display:inline; color:var(--muted); }
 
-/* -------- SEPARATEUR INTERNE -------- */
-.inner-sep {
-  height: 1px;
-  background: var(--border);
-  margin: 0 12px;
+/* Ligne inférieure : pct + pts + users */
+.opt-bottom {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.opt-bottom.right {
+  flex-direction: row-reverse;
 }
 
-/* -------- FOOTER -------- */
+.opt-pct {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.opt-pts {
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255,255,255,.6);
+  font-variant-numeric: tabular-nums;
+}
+
+.opt-users {
+  font-size: 10px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Barre split unifiée ---- */
+.split-bar {
+  display: flex;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: rgba(255,255,255,.07);
+}
+
+.bar-left {
+  height: 100%;
+  background: var(--c1);
+  border-radius: 3px 0 0 3px;
+  transition: width var(--tr);
+  position: relative;
+}
+/* reflet lumineux sur la barre */
+.bar-left::after, .bar-right::after {
+  content:'';
+  position:absolute;
+  inset:0;
+  background: linear-gradient(180deg, rgba(255,255,255,.18) 0%, transparent 60%);
+  pointer-events:none;
+}
+
+.bar-right {
+  height: 100%;
+  background: var(--c2);
+  border-radius: 0 3px 3px 0;
+  flex: 1;
+  position: relative;
+}
+
+/* Curseur central (trait blanc) entre les deux côtés */
+.bar-left::before {
+  content:'';
+  position:absolute;
+  right:-1px; top:0; bottom:0;
+  width:2px;
+  background:rgba(255,255,255,.55);
+  border-radius:1px;
+  z-index:1;
+}
+
+/* ---- Footer ---- */
 .widget-footer {
   padding: 5px 12px 8px;
+  margin-top: 6px;
+  border-top: 1px solid var(--border);
   font-size: 10px;
   color: var(--muted);
   display: flex;
   align-items: center;
   gap: 5px;
-  border-top: 1px solid var(--border);
-  margin-top: 2px;
   font-variant-numeric: tabular-nums;
 }
-.widget-footer span { color: rgba(255,255,255,.65); font-weight: 600; }
-.foot-sep { color: var(--muted); }
+.widget-footer span { color:rgba(255,255,255,.65); font-weight:600; }
+.sep { color:var(--muted); }
 
-/* -------- GLOW GAGNANT -------- */
-@keyframes winGlow {
-  0%,100% { background: rgba(255,215,0,.04); }
-  50%     { background: rgba(255,215,0,.09); }
-}
-.option.winner { animation: winGlow 2.5s ease-in-out infinite; }
+/* ---- États gagnant/perdant ---- */
+.option.winner .opt-pct { color: #ffd700; }
+.option.loser  { opacity: .4; }
