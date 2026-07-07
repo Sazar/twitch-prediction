@@ -5,107 +5,70 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Twitch Prediction Overlay</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 </head>
 <body>
 
-<div id="prediction-widget" class="prediction-widget hidden">
+<div id="prediction-widget" class="widget hidden">
 
-  <!-- Header -->
-  <div class="widget-header">
-    <div class="header-left">
-      <div class="prediction-icon">
-        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M10 2L12.09 7.26L18 8.27L14 12.14L14.99 18L10 15.27L5.01 18L6 12.14L2 8.27L7.91 7.26L10 2Z"
-                fill="currentColor"/>
-        </svg>
-      </div>
-      <div class="header-text">
-        <span class="prediction-label">PRÉDICTION</span>
-        <span class="prediction-title" id="prediction-title">Qui va gagner ?</span>
-      </div>
-    </div>
-    <div class="header-right">
-      <div class="timer-container" id="timer-container">
-        <svg class="timer-icon" width="14" height="14" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
-          <path d="M12 7V12L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-        <span id="timer-display">60s</span>
-      </div>
-      <div class="status-badge" id="status-badge">EN COURS</div>
+  <!-- Titre + timer -->
+  <div class="widget-top">
+    <span class="widget-label">PRÉDICTION</span>
+    <span class="widget-title" id="prediction-title">Qui va gagner ?</span>
+    <div class="widget-right">
+      <span class="timer" id="timer-display">60s</span>
+      <span class="status" id="status-badge">EN COURS</span>
     </div>
   </div>
 
-  <!-- Options -->
-  <div class="options-container" id="options-container">
+  <!-- Corps : deux options côte à côte -->
+  <div class="widget-body">
 
     <!-- Option 1 -->
-    <div class="option option-1" id="option-1">
-      <div class="option-header">
-        <div class="option-dot dot-1"></div>
-        <span class="option-title" id="option-1-title">Option A</span>
-        <span class="option-badge" id="option-1-badge"></span>
+    <div class="option" id="option-1">
+      <div class="opt-header">
+        <span class="opt-color c1"></span>
+        <span class="opt-name" id="opt-1-name">Option A</span>
+        <span class="opt-pct" id="opt-1-pct">50%</span>
       </div>
-      <div class="option-bar-container">
-        <div class="option-bar bar-1" id="option-1-bar" style="width: 50%"></div>
+      <div class="opt-bar-track">
+        <div class="opt-bar b1" id="opt-1-bar" style="width:50%"></div>
       </div>
-      <div class="option-stats">
-        <span class="stat-points" id="option-1-points">0</span>
-        <span class="stat-label">pts</span>
-        <span class="stat-separator">·</span>
-        <span class="stat-users" id="option-1-users">0</span>
-        <span class="stat-label">participants</span>
-        <span class="stat-percent" id="option-1-percent">50%</span>
+      <div class="opt-stats">
+        <span class="opt-pts" id="opt-1-pts">0 pts</span>
+        <span class="opt-users" id="opt-1-users">0 <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2.5"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2.5"/></svg></span>
       </div>
+      <span class="opt-badge" id="opt-1-badge"></span>
     </div>
 
     <!-- Séparateur VS -->
-    <div class="vs-divider">
-      <div class="vs-line"></div>
-      <span class="vs-text">VS</span>
-      <div class="vs-line"></div>
-    </div>
+    <div class="vs">VS</div>
 
     <!-- Option 2 -->
-    <div class="option option-2" id="option-2">
-      <div class="option-header">
-        <div class="option-dot dot-2"></div>
-        <span class="option-title" id="option-2-title">Option B</span>
-        <span class="option-badge" id="option-2-badge"></span>
+    <div class="option" id="option-2">
+      <div class="opt-header">
+        <span class="opt-color c2"></span>
+        <span class="opt-name" id="opt-2-name">Option B</span>
+        <span class="opt-pct" id="opt-2-pct">50%</span>
       </div>
-      <div class="option-bar-container">
-        <div class="option-bar bar-2" id="option-2-bar" style="width: 50%"></div>
+      <div class="opt-bar-track">
+        <div class="opt-bar b2" id="opt-2-bar" style="width:50%"></div>
       </div>
-      <div class="option-stats">
-        <span class="stat-points" id="option-2-points">0</span>
-        <span class="stat-label">pts</span>
-        <span class="stat-separator">·</span>
-        <span class="stat-users" id="option-2-users">0</span>
-        <span class="stat-label">participants</span>
-        <span class="stat-percent" id="option-2-percent">50%</span>
+      <div class="opt-stats">
+        <span class="opt-pts" id="opt-2-pts">0 pts</span>
+        <span class="opt-users" id="opt-2-users">0 <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2.5"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2.5"/></svg></span>
       </div>
+      <span class="opt-badge" id="opt-2-badge"></span>
     </div>
 
   </div>
 
-  <!-- Footer total -->
-  <div class="widget-footer">
-    <div class="total-points">
-      <svg width="12" height="12" viewBox="0 0 20 20" fill="none">
-        <path d="M10 2L12.09 7.26L18 8.27L14 12.14L14.99 18L10 15.27L5.01 18L6 12.14L2 8.27L7.91 7.26L10 2Z" fill="currentColor"/>
-      </svg>
-      <span id="total-points">0</span> points au total
-    </div>
-    <div class="total-users">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2"/>
-        <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" stroke-width="2"/>
-        <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="2"/>
-      </svg>
-      <span id="total-users">0</span> participants
-    </div>
+  <!-- Pied : total -->
+  <div class="widget-foot">
+    <span id="total-pts">0</span> pts au total
+    &nbsp;·&nbsp;
+    <span id="total-users">0</span> participants
   </div>
 
 </div>

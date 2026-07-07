@@ -1,395 +1,269 @@
-/* ==========================================
-   Twitch Prediction Overlay – widget.css
-   ========================================== */
+/* ===================================
+   Twitch Prediction Overlay – CSS
+   Style : compact / minimaliste
+   =================================== */
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --c1: #5b9cf6;       /* bleu – option 1 */
+  --c2: #d672f5;       /* violet/rose – option 2 */
+  --bg: rgba(12, 12, 16, 0.82);
+  --border: rgba(255,255,255,0.07);
+  --text: #ffffff;
+  --muted: rgba(255,255,255,0.45);
+  --radius: 10px;
+  --tr: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body {
-  font-family: 'Inter', 'Roobert', sans-serif;
+  font-family: 'Inter', sans-serif;
   background: transparent;
   overflow: hidden;
-  width: 420px;
+  width: 480px;
 }
 
-/* ---- Variables ---- */
-:root {
-  --color-bg: rgba(14, 14, 18, 0.92);
-  --color-border: rgba(255, 255, 255, 0.08);
-  --color-option1: #5b8af5;
-  --color-option2: #e879f9;
-  --color-option1-glow: rgba(91, 138, 245, 0.3);
-  --color-option2-glow: rgba(232, 121, 249, 0.3);
-  --color-text-primary: #ffffff;
-  --color-text-secondary: rgba(255,255,255,0.6);
-  --color-text-muted: rgba(255,255,255,0.35);
-  --color-winner-bg: rgba(255, 215, 0, 0.12);
-  --color-winner-border: rgba(255, 215, 0, 0.5);
-  --radius: 16px;
-  --radius-sm: 8px;
-  --transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* ---- Widget Container ---- */
-.prediction-widget {
-  width: 420px;
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
+/* ============ WIDGET ============ */
+.widget {
+  width: 480px;
+  background: var(--bg);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 16px;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.4),
-    0 1px 0 rgba(255,255,255,0.05) inset;
-  transform-origin: top center;
+  padding: 10px 12px 8px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
-/* ---- Animation states ---- */
-.prediction-widget.hidden {
-  display: none;
+.widget.hidden { display: none; }
+
+.widget.in  { animation: fadeDown .4s cubic-bezier(.34,1.56,.64,1) forwards; }
+.widget.out { animation: fadeUp  .3s ease-in forwards; }
+
+@keyframes fadeDown {
+  from { opacity:0; transform:translateY(-10px) scale(.97); }
+  to   { opacity:1; transform:translateY(0)     scale(1);   }
+}
+@keyframes fadeUp {
+  from { opacity:1; transform:translateY(0);    }
+  to   { opacity:0; transform:translateY(-8px); }
 }
 
-.prediction-widget.entering {
-  animation: slideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-.prediction-widget.leaving {
-  animation: slideOut 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes slideOut {
-  from {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-20px) scale(0.95);
-  }
-}
-
-/* ---- Header ---- */
-.widget-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 14px;
-  gap: 8px;
-}
-
-.header-left {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  flex: 1;
-  min-width: 0;
-}
-
-.prediction-icon {
-  width: 30px;
-  height: 30px;
-  background: linear-gradient(135deg, #9146ff, #bf94ff);
-  border-radius: 8px;
+/* ============ HEADER ============ */
+.widget-top {
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: white;
-  flex-shrink: 0;
-  margin-top: 1px;
+  gap: 6px;
+  margin-bottom: 8px;
+  line-height: 1;
 }
 
-.header-text {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  min-width: 0;
-}
-
-.prediction-label {
+.widget-label {
   font-size: 9px;
   font-weight: 700;
-  letter-spacing: 1.5px;
+  letter-spacing: 1.4px;
   color: #9146ff;
   text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.prediction-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--color-text-primary);
+.widget-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  flex: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 230px;
-  line-height: 1.2;
+  min-width: 0;
 }
 
-.header-right {
+.widget-right {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
   gap: 6px;
   flex-shrink: 0;
 }
 
-/* ---- Timer ---- */
-.timer-container {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--color-text-secondary);
-  font-size: 12px;
+.timer {
+  font-size: 11px;
   font-weight: 600;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
 }
 
-.timer-container.urgent {
-  color: #ff6b6b;
-  animation: pulse 1s ease-in-out infinite;
+.timer.urgent {
+  color: #ff5555;
+  animation: blink 1s ease-in-out infinite;
 }
 
-@keyframes pulse {
+@keyframes blink {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  50%       { opacity: 0.4; }
 }
 
-/* ---- Status Badge ---- */
-.status-badge {
+.status {
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 1px;
-  padding: 3px 8px;
+  padding: 2px 7px;
   border-radius: 20px;
   text-transform: uppercase;
+  white-space: nowrap;
 }
+.status.s-active  { background: rgba(0,200,100,.12); color: #00c864; border: 1px solid rgba(0,200,100,.25); }
+.status.s-locked  { background: rgba(255,180,0,.12);  color: #ffb400; border: 1px solid rgba(255,180,0,.25); }
+.status.s-ended   { background: rgba(255,255,255,.06); color: var(--muted); border: 1px solid var(--border); }
 
-.status-badge.active {
-  background: rgba(0, 200, 100, 0.15);
-  color: #00c864;
-  border: 1px solid rgba(0, 200, 100, 0.3);
-}
-
-.status-badge.locked {
-  background: rgba(255, 180, 0, 0.15);
-  color: #ffb400;
-  border: 1px solid rgba(255, 180, 0, 0.3);
-}
-
-.status-badge.ended {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--color-text-secondary);
-  border: 1px solid var(--color-border);
-}
-
-/* ---- Options container ---- */
-.options-container {
-  display: flex;
-  flex-direction: column;
+/* ============ BODY – options côte à côte ============ */
+.widget-body {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: stretch;
   gap: 0;
 }
 
-/* ---- Option card ---- */
-.option {
-  padding: 12px;
-  border-radius: var(--radius-sm);
-  background: rgba(255,255,255,0.03);
-  border: 1px solid var(--color-border);
-  transition: all var(--transition);
+.vs {
+  align-self: center;
+  padding: 0 10px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: var(--muted);
 }
+
+/* ============ OPTION ============ */
+.option {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,.02);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  position: relative;
+  transition: background var(--tr), border-color var(--tr);
+}
+
+/* Option 1 : barre sur la droite */
+#option-1 { border-right: none; border-radius: 8px 0 0 8px; }
+#option-2 { border-left:  none; border-radius: 0 8px 8px 0; }
 
 .option.winner {
-  background: var(--color-winner-bg);
-  border-color: var(--color-winner-border);
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
+  background: rgba(255,215,0,.07);
+  border-color: rgba(255,215,0,.35);
 }
-
 .option.loser {
-  opacity: 0.45;
-  filter: grayscale(0.3);
+  opacity: .4;
 }
 
-.option-header {
+.opt-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 6px;
 }
 
-.option-dot {
-  width: 10px;
-  height: 10px;
+.opt-color {
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   flex-shrink: 0;
 }
+.c1 { background: var(--c1); box-shadow: 0 0 5px color-mix(in oklab, var(--c1) 60%, transparent); }
+.c2 { background: var(--c2); box-shadow: 0 0 5px color-mix(in oklab, var(--c2) 60%, transparent); }
 
-.dot-1 { background: var(--color-option1); box-shadow: 0 0 6px var(--color-option1-glow); }
-.dot-2 { background: var(--color-option2); box-shadow: 0 0 6px var(--color-option2-glow); }
-
-.option-title {
-  font-size: 13px;
+.opt-name {
+  font-size: 12px;
   font-weight: 600;
-  color: var(--color-text-primary);
+  color: var(--text);
   flex: 1;
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }
 
-.option-badge {
-  font-size: 11px;
-  padding: 2px 7px;
-  border-radius: 12px;
+.opt-pct {
+  font-size: 13px;
   font-weight: 700;
-  display: none;
+  color: var(--text);
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
 }
 
-.option-badge.winner-badge {
-  display: inline-block;
-  background: rgba(255, 215, 0, 0.2);
-  color: #ffd700;
-  border: 1px solid rgba(255, 215, 0, 0.4);
-}
-
-.option-badge.loser-badge {
-  display: inline-block;
-  background: rgba(255,255,255,0.05);
-  color: var(--color-text-muted);
-  border: 1px solid var(--color-border);
-}
-
-/* ---- Progress bar ---- */
-.option-bar-container {
-  height: 6px;
-  background: rgba(255,255,255,0.08);
-  border-radius: 3px;
+/* ---- Barre ---- */
+.opt-bar-track {
+  height: 4px;
+  background: rgba(255,255,255,.07);
+  border-radius: 2px;
   overflow: hidden;
-  margin-bottom: 8px;
 }
-
-.option-bar {
+.opt-bar {
   height: 100%;
-  border-radius: 3px;
-  transition: width var(--transition);
+  border-radius: 2px;
+  transition: width var(--tr);
 }
-
-.bar-1 {
-  background: linear-gradient(90deg, var(--color-option1), rgba(91,138,245,0.7));
-  box-shadow: 0 0 8px var(--color-option1-glow);
-}
-
-.bar-2 {
-  background: linear-gradient(90deg, var(--color-option2), rgba(232,121,249,0.7));
-  box-shadow: 0 0 8px var(--color-option2-glow);
-}
+.b1 { background: var(--c1); }
+.b2 { background: var(--c2); }
 
 /* ---- Stats ---- */
-.option-stats {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex-wrap: wrap;
-}
-
-.stat-points {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--color-text-primary);
-}
-
-.stat-label {
-  font-size: 11px;
-  color: var(--color-text-muted);
-}
-
-.stat-separator {
-  color: var(--color-text-muted);
-  font-size: 11px;
-}
-
-.stat-users {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-text-secondary);
-}
-
-.stat-percent {
-  font-size: 13px;
-  font-weight: 700;
-  margin-left: auto;
-  color: var(--color-text-secondary);
-}
-
-/* ---- VS Divider ---- */
-.vs-divider {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-}
-
-.vs-line {
-  flex: 1;
-  height: 1px;
-  background: var(--color-border);
-}
-
-.vs-text {
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 2px;
-  color: var(--color-text-muted);
-  text-transform: uppercase;
-}
-
-/* ---- Footer ---- */
-.widget-footer {
+.opt-stats {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 1px solid var(--color-border);
-  color: var(--color-text-muted);
-  font-size: 11px;
-  font-weight: 500;
 }
 
-.total-points,
-.total-users {
+.opt-pts {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.opt-users {
+  font-size: 10px;
+  color: var(--muted);
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 3px;
+  font-variant-numeric: tabular-nums;
 }
 
-.total-points svg,
-.total-users svg { opacity: 0.5; }
+/* ---- Badge gagnant/perdant ---- */
+.opt-badge {
+  font-size: 10px;
+  font-weight: 700;
+  display: none;
+  align-self: flex-start;
+}
+.opt-badge.win {
+  display: block;
+  color: #ffd700;
+}
+.opt-badge.lose {
+  display: block;
+  color: var(--muted);
+}
 
-.total-points span,
-.total-users span {
-  color: var(--color-text-secondary);
+/* ============ FOOTER ============ */
+.widget-foot {
+  margin-top: 7px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+  font-size: 10px;
+  color: var(--muted);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.widget-foot span {
+  color: rgba(255,255,255,.7);
   font-weight: 600;
 }
 
-/* ---- Résultat winner glow ---- */
-@keyframes winnerGlow {
-  0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.1); }
-  50% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.25); }
+/* ============ WINNER GLOW ============ */
+@keyframes winGlow {
+  0%, 100% { border-color: rgba(255,215,0,.25); }
+  50%       { border-color: rgba(255,215,0,.55); }
 }
-
-.option.winner {
-  animation: winnerGlow 2s ease-in-out infinite;
-}
+.option.winner { animation: winGlow 2.5s ease-in-out infinite; }
