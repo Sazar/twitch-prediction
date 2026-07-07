@@ -8,12 +8,14 @@ let state = {
   endTime: null,
   timerInterval: null,
   hideTimeout: null,
-  previewInterval: null
+  previewInterval: null,
+  _previewTids: []
 };
 
 let cfg = {
   color1:    '#5b9cf6',
   color2:    '#d672f5',
+  bgOpacity: 88,
   showTimer: true,
   hideDelay: 8
 };
@@ -45,7 +47,8 @@ function onBegin(d) {
     endTime: d.locks_at ? new Date(d.locks_at) : null,
     timerInterval: null,
     hideTimeout: null,
-    previewInterval: null
+    previewInterval: null,
+    _previewTids: []
   };
   render();
   show();
@@ -82,12 +85,11 @@ function onEnd(d) {
     users: o.users || 0,
     isWinner: o.id === wid
   }));
-  // Cacher le timer et afficher "Terminé"
   const t = el('timer-display');
   if (t) { t.textContent = 'Terminé'; t.classList.remove('urgent'); }
   renderResult();
   setBadgeStatus();
-  updateBars(true);
+  updateBars();
   updateStats();
   state.hideTimeout = setTimeout(hide, cfg.hideDelay * 1000);
 }
@@ -122,17 +124,16 @@ function renderResult() {
     badge.className = `opt-badge ${o.isWinner ? 'win' : 'lose'}`;
     badge.textContent = o.isWinner ? '🏆 Gagnant' : 'Perdant';
   });
-  // Glow sur la barre du gagnant
   const wIdx = state.outcomes.findIndex(o => o.isWinner);
   if (wIdx === 0) el('bar-left').classList.add('winner-side');
   if (wIdx === 1) el('bar-right').classList.add('winner-side');
 }
 
-function updateBars(isEnd) {
+function updateBars() {
   const total = state.outcomes.reduce((a, o) => a + (o.channel_points||0), 0);
   const pct1  = total > 0 ? Math.round((state.outcomes[0]?.channel_points||0) / total * 100) : 50;
   const pct2  = 100 - pct1;
-  el('bar-left').style.width   = pct1 + '%';
+  el('bar-left').style.width = pct1 + '%';
   setText('bar-pct-1', pct1 + '%');
   setText('bar-pct-2', pct2 + '%');
 }
@@ -195,7 +196,7 @@ function hide() {
   }, 350);
 }
 
-/* ── Preview avec animation complète ── */
+/* ── Preview ── */
 function showPreview() {
   onBegin({
     title: 'Ce run finit-il en moins de 30 min ?',
@@ -213,55 +214,50 @@ function showPreview() {
     { delay:3500, pts:[5800,5200],   users:[61,58] },
     { delay:4400, pts:[7200,8100],   users:[73,85] },
     { delay:5300, pts:[8900,10500],  users:[84,99] },
-    { delay:6200, pts:[9600,12200],  users:[90,110]},
-    // Verrouillage
-    { delay:7100, lock: true, pts:[10200,13800], users:[95,122] },
-    // Résultat – option 2 gagne
-    { delay:9200, end: true, winning_outcome_id:'2', pts:[10200,13800], users:[95,122] }
+    { delay:6200, pts:[9600,12200],  users:[90,110] },
+    { delay:7100, lock:true,  pts:[10200,13800], users:[95,122] },
+    { delay:9200, end:true, winning_outcome_id:'2', pts:[10200,13800], users:[95,122] }
   ];
 
-  steps.forEach(s => {
-    const tid = setTimeout(() => {
-      if (s.lock) {
-        onLock({ outcomes: [
-          { id:'1', title:'✅ Oui, facile !', channel_points:s.pts[0], users:s.users[0] },
-          { id:'2', title:'❌ Non, trop dur', channel_points:s.pts[1], users:s.users[1] }
-        ]});
-      } else if (s.end) {
-        onEnd({
-          winning_outcome_id: s.winning_outcome_id,
-          outcomes: [
-            { id:'1', title:'✅ Oui, facile !', channel_points:s.pts[0], users:s.users[0] },
-            { id:'2', title:'❌ Non, trop dur', channel_points:s.pts[1], users:s.users[1] }
-          ]
-        });
-      } else {
-        onProgress({ outcomes: [
-          { id:'1', title:'✅ Oui, facile !', channel_points:s.pts[0], users:s.users[0] },
-          { id:'2', title:'❌ Non, trop dur', channel_points:s.pts[1], users:s.users[1] }
-        ]});
-      }
-    }, s.delay);
-    // Stocker les timeouts pour pouvoir les annuler si besoin
-    if (!state._previewTids) state._previewTids = [];
-    state._previewTids.push(tid);
-  });
+  state._previewTids = steps.map(s => setTimeout(() => {
+    if (s.lock) {
+      onLock({ outcomes: mkOutcomes(s) });
+    } else if (s.end) {
+      onEnd({ winning_outcome_id: s.winning_outcome_id, outcomes: mkOutcomes(s) });
+    } else {
+      onProgress({ outcomes: mkOutcomes(s) });
+    }
+  }, s.delay));
+}
+
+function mkOutcomes(s) {
+  return [
+    { id:'1', title:'✅ Oui, facile !',  channel_points:s.pts[0], users:s.users[0] },
+    { id:'2', title:'❌ Non, trop dur', channel_points:s.pts[1], users:s.users[1] }
+  ];
 }
 
 function stopPreviewAnimation() {
   if (state.previewInterval) { clearInterval(state.previewInterval); state.previewInterval = null; }
-  if (state._previewTids) { state._previewTids.forEach(clearTimeout); state._previewTids = []; }
+  if (state._previewTids)    { state._previewTids.forEach(clearTimeout); state._previewTids = []; }
 }
 
 /* ── Config ── */
 function applyConfig(f) {
-  if (f.color1) cfg.color1 = f.color1;
-  if (f.color2) cfg.color2 = f.color2;
+  if (f.color1)    cfg.color1    = f.color1;
+  if (f.color2)    cfg.color2    = f.color2;
+  if (f.bgOpacity !== undefined) cfg.bgOpacity = parseFloat(f.bgOpacity);
   if (f.showTimer !== undefined) cfg.showTimer = f.showTimer === true || f.showTimer === 'true';
   if (f.hideDelay) cfg.hideDelay = parseInt(f.hideDelay, 10) || 8;
+
   const r = document.documentElement;
   r.style.setProperty('--c1', cfg.color1);
   r.style.setProperty('--c2', cfg.color2);
+
+  // Opacité du fond : convertit 0-100 en 0.0-1.0
+  const alpha = Math.min(1, Math.max(0, cfg.bgOpacity / 100));
+  r.style.setProperty('--bg', `rgba(10, 10, 14, ${alpha})`);
+
   if (!cfg.showTimer) {
     const t = el('timer-display');
     if (t) t.style.display = 'none';

@@ -9,6 +9,14 @@
     "label": "Couleur Option 2",
     "value": "#e879f9"
   },
+  "bgOpacity": {
+    "type": "slider",
+    "label": "Opacité du fond (0 = transparent, 100 = opaque)",
+    "value": 88,
+    "min": 0,
+    "max": 100,
+    "steps": 1
+  },
   "showTimer": {
     "type": "checkbox",
     "label": "Afficher le timer",
