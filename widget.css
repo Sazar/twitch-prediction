@@ -1,6 +1,7 @@
 /* =========================================
-   Twitch Prediction Overlay – CSS v6
+   Twitch Prediction Overlay – CSS v7
    Timer au-dessus de la barre, centré
+   Fix: blink via color (pas opacity) → pas de flou
    ========================================= */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -144,18 +145,30 @@ body {
   display: flex;
   justify-content: center;
   margin-bottom: 4px;
+  /* Isolation du stacking context pour éviter que le blink
+     n'interagisse avec le backdrop-filter du widget parent */
+  isolation: isolate;
 }
 
 .bar-timer {
-  font-size: 11px;
+  font-size: 15px;
   font-weight: 700;
-  color: rgba(255,255,255,.75);
+  color: rgba(255,255,255,.80);
   font-variant-numeric: tabular-nums;
   letter-spacing: .5px;
   line-height: 1;
+  /* will-change: color évite la recomposition du blur parent */
+  will-change: color;
 }
-.bar-timer.urgent { color: #ff5252; animation: blink 1s ease-in-out infinite; }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+/* Blink via color uniquement — jamais opacity sur un enfant de backdrop-filter */
+.bar-timer.urgent {
+  animation: blinkColor 1s ease-in-out infinite;
+}
+@keyframes blinkColor {
+  0%,100% { color: #ff5252; }
+  50%     { color: #ff525240; }
+}
 
 /* ---- Barre large ---- */
 .split-bar-wrap {
@@ -257,7 +270,6 @@ body {
 .option.winner .opt-name { color: #ffd700; }
 .option.loser  { opacity: .4; }
 
-/* Glow gagnant sur la barre côté winner */
 @keyframes winGlowBar {
   0%,100% { box-shadow: none; }
   50%     { box-shadow: inset 0 0 12px rgba(255,215,0,.18); }
